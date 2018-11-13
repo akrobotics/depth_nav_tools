@@ -175,6 +175,9 @@ protected:
         float depth_min = std::numeric_limits<float>::max();
         const unsigned range_min_mm = range_min_ * 1000;
         const unsigned range_max_mm = range_max_ * 1000;
+        float depth_prev_prev = -1000;
+        float depth_prev = -1000;
+        float delta_1 = 10;
 
         // Loop over pixels in column. Calculate z_min in column
         for (size_t i = image_vertical_offset_; i < image_vertical_offset_ + scan_height_;
@@ -206,17 +209,35 @@ protected:
                 {
                     if (depth_m < depth_min && depth_raw_mm < dist_to_ground_corrected[i])
                     {
-                        depth_min = depth_m;
+                        // Check the detected object is a slope
+                        if ((depth_prev - depth_prev_prev) < 0.007 && (depth_m - depth_prev) < 0.007)
+                        {
+                          if(depth_m - depth_prev_prev > delta_1)
+                          {
+                            depth_min = depth_m;
+                          }
+                        }
+
                     }
                 }
                 else
                 {
                     if (depth_m < depth_min)
                     {
-                        depth_min = depth_m;
+                        // Check the detected object is a slope
+                        if ((depth_prev - depth_prev_prev) < 0.007 && (depth_m - depth_prev) < 0.007)
+                        {
+                          if(depth_m - depth_prev_prev > delta_1)
+                          {
+                            depth_min = depth_m;
+                          }
+                        }
                     }
                 }
             }
+
+            depth_prev_prev = depth_prev;
+            depth_prev = depth_m;
         }
         return depth_min;
     }

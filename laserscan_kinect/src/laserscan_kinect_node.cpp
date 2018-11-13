@@ -79,24 +79,24 @@ void LaserScanKinectNode::connectCb(const ros::SingleSubscriberPublisher& pub)
 {
     std::lock_guard<std::mutex> lock(connect_mutex_);
 
-    if (!sub_ && pub_.getNumSubscribers() > 0)
-    {
+    // if (!sub_ && pub_.getNumSubscribers() > 0)
+    // {
         ROS_DEBUG("Connecting to depth topic.");
         image_transport::TransportHints hints("raw", ros::TransportHints(), pnh_);
         sub_ = it_.subscribeCamera("image", 10, &LaserScanKinectNode::depthCb, this, hints);
-    }
+    // }
 }
 
 //=================================================================================================
 void LaserScanKinectNode::disconnectCb(const ros::SingleSubscriberPublisher& pub)
 {
-    std::lock_guard<std::mutex> lock(connect_mutex_);
+    // std::lock_guard<std::mutex> lock(connect_mutex_);
 
-    if (pub_.getNumSubscribers() == 0)
-    {
-        ROS_DEBUG("Unsubscribing from depth topic.");
-        sub_.shutdown();
-    }
+    // if (pub_.getNumSubscribers() == 0)
+    // {
+    //     ROS_DEBUG("Unsubscribing from depth topic.");
+    //     sub_.shutdown();
+    // }
 }
 
 //=================================================================================================
