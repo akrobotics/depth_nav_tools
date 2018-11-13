@@ -177,7 +177,8 @@ protected:
         const unsigned range_max_mm = range_max_ * 1000;
         float depth_prev_prev = -1000;
         float depth_prev = -1000;
-        float delta_1 = 10;
+        float min_diff = 0.007;
+        float max_diff = 10;
 
         // Loop over pixels in column. Calculate z_min in column
         for (size_t i = image_vertical_offset_; i < image_vertical_offset_ + scan_height_;
@@ -210,9 +211,9 @@ protected:
                     if (depth_m < depth_min && depth_raw_mm < dist_to_ground_corrected[i])
                     {
                         // Check the detected object is a slope
-                        if ((depth_prev - depth_prev_prev) < 0.007 && (depth_m - depth_prev) < 0.007)
+                        if ((depth_prev - depth_prev_prev) < min_diff && (depth_m - depth_prev) < min_diff)
                         {
-                          if(depth_m - depth_prev_prev > delta_1)
+                          if(depth_m - depth_prev_prev > max_diff)
                           {
                             depth_min = depth_m;
                           }
@@ -225,9 +226,9 @@ protected:
                     if (depth_m < depth_min)
                     {
                         // Check the detected object is a slope
-                        if ((depth_prev - depth_prev_prev) < 0.007 && (depth_m - depth_prev) < 0.007)
+                        if ((depth_prev - depth_prev_prev) < min_diff && (depth_m - depth_prev) < min_diff)
                         {
-                          if(depth_m - depth_prev_prev > delta_1)
+                          if(depth_m - depth_prev_prev > max_diff)
                           {
                             depth_min = depth_m;
                           }
