@@ -140,12 +140,6 @@ public:
    * @param min_diff
    */
     void setMinDiff (const bool min_diff) { min_diff_ = min_diff; }
-    /**
-   * @brief setMaxDiff sets the maximum difference in depths allowed
-   *
-   * @param max_diff
-   */
-    void setMaxDiff (const bool max_diff) { max_diff_ = max_diff; }
 
 protected:
     /**
@@ -232,12 +226,9 @@ protected:
                         if (slope_detection_)
                         {
                             // Check the detected object is a slope
-                            if ((depth_n_1 - depth_n_2) < min_diff_ && (depth_m - depth_n_1) < min_diff_)
+                            if ((depth_n_1 - depth_n_2) > min_diff_ && (depth_m - depth_n_1) > min_diff_)
                             {
-                                if(depth_m - depth_n_2 > max_diff_)
-                                {
-                                  depth_min = depth_m;
-                                }
+                              depth_min = depth_m;
                             }
                         }
                         else
@@ -251,12 +242,9 @@ protected:
                         if (slope_detection_)
                         {
                             // Check the detected object is a slope
-                            if ((depth_n_1 - depth_n_2) < min_diff_ && (depth_m - depth_n_1) < min_diff_)
+                            if ((depth_n_1 - depth_n_2) > min_diff_ && (depth_m - depth_n_1) > min_diff_)
                             {
-                                if(depth_m - depth_n_2 > max_diff_)
-                                {
-                                  depth_min = depth_m;
-                                }
+                              depth_min = depth_m;
                             }
                         }
                         else
@@ -293,7 +281,6 @@ private:
     bool  tilt_compensation_enable_{false}; ///< Determines if tilt compensation feature is on
     bool  slope_detection_{false};           ///< Determines if a slope should be removed from scan
     float min_diff_{0};                     ///< Min difference in depths when detecting slopes
-    float max_diff_{0};                     ///< Max difference in depths when detecting slopes
     //-----------------------------------------------------------------------------------------------
 
     /// Published scan message

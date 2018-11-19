@@ -23,9 +23,7 @@ ground_margin: 0.05
 tilt_compensation_en: true
 
 # Enable slope detection.
-slope_detection: true
-# Max difference in depths in image rows.
-max_diff: 10.0
-# Min difference in depths in image rows.
-min_diff: 0.007
+slope_detection: false
+# Min difference in depths between image rows to be considered a slope.
+min_diff: 0.0
 
