@@ -115,6 +115,10 @@ void LaserScanKinectNode::reconfigureCb(laserscan_kinect::LaserscanKinectConfig&
     converter_.setGroundMargin(config.ground_margin);
     converter_.setTiltCompensation(config.tilt_compensation_en);
 
+    converter_.setSlopeDetection(config.slope_detection);
+    converter_.setMaxDiff(config.max_diff);
+    converter_.setMinDiff(config.min_diff);
+
     converter_.setScanConfigurated(false);
 }
 

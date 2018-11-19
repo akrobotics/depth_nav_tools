@@ -21,3 +21,11 @@ ground_remove_en: true
 ground_margin: 0.05
 # Sensor tilt angle compensation.
 tilt_compensation_en: true
+
+# Enable slope detection.
+slope_detection: true
+# Max difference in depths in image rows.
+max_diff: 10.0
+# Min difference in depths in image rows.
+min_diff: 0.007
+

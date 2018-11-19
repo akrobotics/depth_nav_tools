@@ -128,6 +128,24 @@ public:
    * @param enable
    */
     void setScanConfigurated (const bool configurated) { is_scan_msg_configurated_ = configurated; }
+    /**
+   * @brief setSlopeDetection enables or disables the ramp detection feature
+   *
+   * @param enable
+   */
+    void setSlopeDetection (const bool enable) { slope_detection_ = enable; }
+    /**
+   * @brief setMinDiff sets the minimum difference in depths allowed
+   *
+   * @param min_diff
+   */
+    void setMinDiff (const bool min_diff) { min_diff_ = min_diff; }
+    /**
+   * @brief setMaxDiff sets the maximum difference in depths allowed
+   *
+   * @param max_diff
+   */
+    void setMaxDiff (const bool max_diff) { max_diff_ = max_diff; }
 
 protected:
     /**
@@ -175,10 +193,11 @@ protected:
         float depth_min = std::numeric_limits<float>::max();
         const unsigned range_min_mm = range_min_ * 1000;
         const unsigned range_max_mm = range_max_ * 1000;
-        float depth_prev_prev = -1000;
-        float depth_prev = -1000;
-        float min_diff = 0.007;
-        float max_diff = 10;
+
+        // The ramp detection algorithm works by looping over the rows in the column so if the current
+        // point is n then depth_n_1 is the depth at the n-1 point and depth_n_2 is the depth at the n-2 point
+        float depth_n_1 = -1000;
+        float depth_n_2 = -1000;
 
         // Loop over pixels in column. Calculate z_min in column
         for (size_t i = image_vertical_offset_; i < image_vertical_offset_ + scan_height_;
@@ -210,35 +229,43 @@ protected:
                 {
                     if (depth_m < depth_min && depth_raw_mm < dist_to_ground_corrected[i])
                     {
-                        // Check the detected object is a slope
-                        if ((depth_prev - depth_prev_prev) < min_diff && (depth_m - depth_prev) < min_diff)
+                        if (slope_detection_)
                         {
-                          if(depth_m - depth_prev_prev > max_diff)
-                          {
-                            depth_min = depth_m;
-                          }
+                            // Check the detected object is a slope
+                            if ((depth_n_1 - depth_n_2) < min_diff_ && (depth_m - depth_n_1) < min_diff_)
+                            {
+                                if(depth_m - depth_n_2 > max_diff_)
+                                {
+                                  depth_min = depth_m;
+                                }
+                            }
                         }
-
+                        else
+                          depth_min = depth_m;
                     }
                 }
                 else
                 {
                     if (depth_m < depth_min)
                     {
-                        // Check the detected object is a slope
-                        if ((depth_prev - depth_prev_prev) < min_diff && (depth_m - depth_prev) < min_diff)
+                        if (slope_detection_)
                         {
-                          if(depth_m - depth_prev_prev > max_diff)
-                          {
-                            depth_min = depth_m;
-                          }
+                            // Check the detected object is a slope
+                            if ((depth_n_1 - depth_n_2) < min_diff_ && (depth_m - depth_n_1) < min_diff_)
+                            {
+                                if(depth_m - depth_n_2 > max_diff_)
+                                {
+                                  depth_min = depth_m;
+                                }
+                            }
                         }
+                        else
+                          depth_min = depth_m;
                     }
                 }
             }
-
-            depth_prev_prev = depth_prev;
-            depth_prev = depth_m;
+            depth_n_2 = depth_n_1;
+            depth_n_1 = depth_m;
         }
         return depth_min;
     }
@@ -264,6 +291,9 @@ private:
     bool  ground_remove_enable_{false};     ///< Determines if remove ground from output scan
     float ground_margin_{0};                ///< Margin for floor remove feature (in meters)
     bool  tilt_compensation_enable_{false}; ///< Determines if tilt compensation feature is on
+    bool  slope_detection_{false};           ///< Determines if a slope should be removed from scan
+    float min_diff_{0};                     ///< Min difference in depths when detecting slopes
+    float max_diff_{0};                     ///< Max difference in depths when detecting slopes
     //-----------------------------------------------------------------------------------------------
 
     /// Published scan message
