@@ -279,7 +279,7 @@ private:
     bool  ground_remove_enable_{false};     ///< Determines if remove ground from output scan
     float ground_margin_{0};                ///< Margin for floor remove feature (in meters)
     bool  tilt_compensation_enable_{false}; ///< Determines if tilt compensation feature is on
-    bool  slope_detection_{false};           ///< Determines if a slope should be removed from scan
+    bool  slope_detection_{false};          ///< Determines if a slope should be removed from scan
     float min_diff_{0};                     ///< Min difference in depths when detecting slopes
     //-----------------------------------------------------------------------------------------------
 
