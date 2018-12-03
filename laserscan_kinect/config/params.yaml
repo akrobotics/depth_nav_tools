@@ -22,3 +22,8 @@ ground_margin: 0.05
 # Sensor tilt angle compensation.
 tilt_compensation_en: true
 
+# Enable slope detection.
+slope_detection: false
+# Min difference in depths between image rows to be considered a slope.
+min_diff: 0.0
+
