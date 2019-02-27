@@ -119,6 +119,9 @@ void LaserScanKinectNode::reconfigureCb(laserscan_kinect::LaserscanKinectConfig&
     converter_.setMinDiff(config.min_diff);
 
     converter_.setScanConfigurated(false);
+
+    converter_.setHorizontalAngleFilterEn(config.horizontal_angle_filter_en);
+    converter_.setHorizontalAngleFilter(config.horizontal_angle_filter);
 }
 
 //=================================================================================================

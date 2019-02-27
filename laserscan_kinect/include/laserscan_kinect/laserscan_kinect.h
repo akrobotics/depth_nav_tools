@@ -121,6 +121,14 @@ public:
    *
    * @param enable
    */
+
+    /**
+   * @brief setHorizontalFieldOfView sets the horizontal field of view member
+   *
+   * @param fov
+   */
+    void setHorizontalFieldOfView(const double fov);
+
     void setTiltCompensation (const bool enable) { tilt_compensation_enable_ = enable; }
     /**
    * @brief setScanConfigurated sets the configuration status
@@ -140,6 +148,20 @@ public:
    * @param min_diff
    */
     void setMinDiff (const bool min_diff) { min_diff_ = min_diff; }
+
+    /**
+   * @brief setHorizontalAngleFilterEn enables/disables the horizontal angle filter
+   *
+   * @param enable
+   */
+    void setHorizontalAngleFilterEn(const float enable) {horizontal_angle_filter_en_ = enable; }
+
+    /**
+   * @brief setHorizontalAngleFilter sets the horizontal angle to filter
+   *
+   * @param angle
+   */
+    void setHorizontalAngleFilter(const float angle);
 
 protected:
     /**
@@ -177,6 +199,11 @@ protected:
     * @param depth_msg
     */
     void calcScanMsgIndexForImgCols(const sensor_msgs::ImageConstPtr& depth_msg);
+
+    /**
+    * @brief isInHorizontalBounds
+    */ 
+    bool isInHorizontalBounds(float depth, int col);
 
     /**
     * @brief getSmallestValueInColumn finds smallest values in depth image columns
@@ -217,7 +244,7 @@ protected:
             }
 
             // Check if point is in ranges and find min value in column
-            if (depth_raw_mm >= range_min_mm && depth_raw_mm <= range_max_mm)
+            if (depth_raw_mm >= range_min_mm && depth_raw_mm <= range_max_mm && (!horizontal_angle_filter_en_ || isInHorizontalBounds(depth_m, col)))
             {
                 if (ground_remove_enable_)
                 {
@@ -281,6 +308,8 @@ private:
     bool  tilt_compensation_enable_{false}; ///< Determines if tilt compensation feature is on
     bool  slope_detection_{false};          ///< Determines if a slope should be removed from scan
     float min_diff_{0};                     ///< Min difference in depths when detecting slopes
+    bool horizontal_angle_filter_en_{false}; ///< Filter to reduce the horizontal field of view
+    float horizontal_angle_filter_{0};      ///< Angle in radians to filter from the edge of horizontal field of view
     //-----------------------------------------------------------------------------------------------
 
     /// Published scan message
@@ -303,6 +332,8 @@ private:
 
     /// The vertical offset of image based on calibration data
     int image_vertical_offset_{0};
+
+    float horizontal_field_of_view_{0};
 };
 
 };

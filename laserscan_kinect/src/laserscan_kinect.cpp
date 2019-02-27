@@ -69,6 +69,8 @@ sensor_msgs::LaserScanPtr LaserScanKinect::getLaserScanMsg(
         calcFieldOfView( Point(0,                    cam_model_.cy()),
                          Point(cam_model_.cx(),      cam_model_.cy()),
                          Point(depth_msg->width - 1, cam_model_.cy()), min_angle, max_angle);
+        double horizontal_fov = max_angle - min_angle;
+        setHorizontalFieldOfView(horizontal_fov);
 
         if ( ground_remove_enable_ )
             calcGroundDistancesForImgRows(vertical_fov);
@@ -216,6 +218,23 @@ void LaserScanKinect::setGroundMargin (const float margin)
 }
 
 //=================================================================================================
+void LaserScanKinect::setHorizontalAngleFilter (const float angle)
+{
+    if( angle > 0)
+        horizontal_angle_filter_ = angle * M_PI / 180;
+    else
+    {
+        horizontal_angle_filter_ = 0;
+        ROS_ERROR("Incorrect value of horizontal angle filter. Set default value: 0.");
+    }
+}
+
+void LaserScanKinect::setHorizontalFieldOfView(const double fov)
+{
+    horizontal_field_of_view_ = fov;
+}
+
+//=================================================================================================
 double LaserScanKinect::lengthOfVector(const cv::Point3d& vec) const
 {
     return sqrt(vec.x*vec.x + vec.y*vec.y + vec.z*vec.z);
@@ -309,6 +328,17 @@ void LaserScanKinect::calcScanMsgIndexForImgCols(const sensor_msgs::ImageConstPt
         double th = -atan2((double)(u - cam_model_.cx()) * 0.001f / cam_model_.fx(), 0.001f);
         scan_msg_index_[u] = (th - scan_msg_->angle_min) / scan_msg_->angle_increment;
     }
+}
+
+//=================================================================================================
+bool LaserScanKinect::isInHorizontalBounds(float depth, int col)
+{
+    float x = (col - cam_model_.cx()) * depth  / cam_model_.fx();
+    float angle = M_PI / 2 - atan (depth / x);
+    angle = angle > M_PI / 2 ? M_PI - angle : angle;
+    if(angle > (horizontal_field_of_view_ / 2 - horizontal_angle_filter_)) 
+        return false;
+    return true;
 }
 
 //=================================================================================================
