@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(nav_layer_from_points)
-
-set(CMAKE_CXX_FLAGS "-std=c++03 ${CMAKE_CXX_FLAGS}")
+add_definitions(-std=c++11)
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 set(CMAKE_BUILD_TYPE Release)
 
 find_package(catkin REQUIRED COMPONENTS
@@ -34,3 +34,4 @@ install(FILES costmap_plugins.xml
 install(TARGETS costmap_layers
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
+

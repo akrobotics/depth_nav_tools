@@ -56,6 +56,7 @@
 #include <dynamic_reconfigure/server.h>
 #include <nav_layer_from_points/NavLayerFromPointsConfig.h>
 
+#include "tf/transform_listener.h"
 
 namespace nav_layer_from_points
 {
